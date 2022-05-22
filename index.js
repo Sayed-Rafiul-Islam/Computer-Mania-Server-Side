@@ -37,6 +37,13 @@ async function run() {
             const parts = await cursor.toArray();
             res.send(parts);
         })
+
+        app.get('/placeOrder/:_id', async (req, res) => {
+            const id = req.params._id;
+            const query = { _id: ObjectId(id) };
+            const result = await partCollection.findOne(query);
+            res.send(result);
+        })
     }
     finally {
 
