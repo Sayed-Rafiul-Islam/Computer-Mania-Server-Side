@@ -44,6 +44,20 @@ async function run() {
             const result = await partCollection.findOne(query);
             res.send(result);
         })
+
+        app.put('/placeOrder/:_id', async (req, res) => {
+            const id = req.params._id;
+            const updatedQuantity = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    quantity: updatedQuantity.updatedQuantity
+                }
+            };
+            const result = await partCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
     }
     finally {
 
