@@ -29,6 +29,14 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
+        const partCollection = client.db("computerMenia").collection("part");
+
+        app.get('/parts', async (req, res) => {
+            const query = {};
+            const cursor = partCollection.find(query);
+            const parts = await cursor.toArray();
+            res.send(parts);
+        })
     }
     finally {
 
