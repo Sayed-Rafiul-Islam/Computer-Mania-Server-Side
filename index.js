@@ -30,6 +30,7 @@ async function run() {
     try {
         await client.connect();
         const partCollection = client.db("computerMenia").collection("part");
+        const orderCollection = client.db("computerMenia").collection("order");
 
         app.get('/parts', async (req, res) => {
             const query = {};
@@ -56,6 +57,12 @@ async function run() {
                 }
             };
             const result = await partCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
+
+        app.post('/orders', async (req, res) => {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
             res.send(result);
         })
     }
