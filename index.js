@@ -83,12 +83,13 @@ async function run() {
         })
 
         app.put('/review', async (req, res) => {
-            const email = req.query.email;
-            const { displayName, rating, experience } = req.body;
-            const query = { email: email };
+            const mail = req.query.email;
+            const { displayName, rating, experience, email } = req.body;
+            const query = { email: mail };
             const options = { upsert: true };
             const updatedDoc = {
                 $set: {
+                    email: email,
                     displayName: displayName,
                     rating: rating,
                     experience: experience
