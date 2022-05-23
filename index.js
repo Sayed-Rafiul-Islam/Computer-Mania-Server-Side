@@ -31,6 +31,7 @@ async function run() {
         await client.connect();
         const partCollection = client.db("computerMenia").collection("part");
         const orderCollection = client.db("computerMenia").collection("order");
+        const ratingCollection = client.db("computerMenia").collection("rating");
 
         app.get('/parts', async (req, res) => {
             const query = {};
@@ -78,6 +79,22 @@ async function run() {
             const id = req.params._id;
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        app.put('/review', async (req, res) => {
+            const email = req.query.email;
+            const { displayName, rating, experience } = req.body;
+            const query = { email: email };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    displayName: displayName,
+                    rating: rating,
+                    experience: experience
+                }
+            };
+            const result = await ratingCollection.updateOne(query, updatedDoc, options);
             res.send(result);
         })
     }
