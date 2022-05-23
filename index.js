@@ -31,7 +31,7 @@ async function run() {
         await client.connect();
         const partCollection = client.db("computerMenia").collection("part");
         const orderCollection = client.db("computerMenia").collection("order");
-        const ratingCollection = client.db("computerMenia").collection("rating");
+        const reviewCollection = client.db("computerMenia").collection("review");
 
         app.get('/parts', async (req, res) => {
             const query = {};
@@ -95,7 +95,7 @@ async function run() {
                     experience: experience
                 }
             };
-            const result = await ratingCollection.updateOne(query, updatedDoc, options);
+            const result = await reviewCollection.updateOne(query, updatedDoc, options);
             res.send(result);
         })
     }
