@@ -164,8 +164,9 @@ async function run() {
 
             app.get('/users', async (req, res) => {
                 const query = {};
-                const users = await profileCollection.find(query).toArray();
-                res.send(users);
+                const users = profileCollection.find(query);
+                const result = await users.toArray()
+                res.send(result);
             })
 
         })
