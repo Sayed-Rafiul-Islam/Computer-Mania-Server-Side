@@ -162,12 +162,12 @@ async function run() {
                 res.send({ result, token });
             }
 
-            app.get('/users', async (req, res) => {
+            app.get('/makeAdmin', async (req, res) => {
                 const query = {};
-                const users = profileCollection.find(query);
-                const result = await users.toArray()
-                res.send(result);
+                const cursor = await profileCollection.find(query).toArray();
+                res.send(cursor);
             })
+
 
         })
     }
