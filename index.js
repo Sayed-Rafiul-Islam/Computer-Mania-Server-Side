@@ -186,6 +186,9 @@ async function run() {
                 const result = await profileCollection.updateOne(query, updatedDoc, options);
                 res.send(result);
             }
+            else {
+                res.status(403).send({ message: 'forbidden access' })
+            }
 
         })
     }
