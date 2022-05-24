@@ -161,14 +161,11 @@ async function run() {
                 const result = await profileCollection.updateOne(query, updatedDoc, options);
                 res.send({ result, token });
             }
-
-            app.get('/profile', async (req, res) => {
-                const query = {};
-                const cursor = await profileCollection.find(query).toArray();
-                res.send(cursor);
-            })
-
-
+        })
+        app.get('/users', async (req, res) => {
+            const query = {};
+            const users = await profileCollection.find(query).toArray();
+            res.send(users)
         })
     }
     finally {
