@@ -162,7 +162,7 @@ async function run() {
                 res.send({ result, token });
             }
 
-            app.get('/makeAdmin', async (req, res) => {
+            app.get('/profile', async (req, res) => {
                 const query = {};
                 const cursor = await profileCollection.find(query).toArray();
                 res.send(cursor);
