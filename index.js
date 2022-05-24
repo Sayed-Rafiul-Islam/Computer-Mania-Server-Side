@@ -110,9 +110,9 @@ async function run() {
         app.put('/profile', async (req, res) => {
             const mail = req.query.email;
             const query = { email: mail };
-            const options = { upsert: true };
             if (req.body.education) {
                 const { displayName, email, education, linkedin, location, phone } = req.body;
+                const options = { upsert: true };
                 const updatedDoc = {
                     $set: {
                         email: email,
@@ -123,17 +123,20 @@ async function run() {
                         phone: phone
                     }
                 };
+                const result = await profileCollection.updateOne(query, updatedDoc, options);
+                res.send(result);
             }
             else {
                 const { email } = req.body;
+                const options = { upsert: true };
                 const updatedDoc = {
                     $set: {
                         email: email
                     }
                 };
+                const result = await profileCollection.updateOne(query, updatedDoc, options);
+                res.send(result);
             }
-            const result = await profileCollection.updateOne(query, updatedDoc, options);
-            res.send(result);
         })
     }
     finally {
