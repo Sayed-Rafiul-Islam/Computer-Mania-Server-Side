@@ -28,6 +28,24 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
+
+        function varifyJWT(req, res, next) {
+            const authHeader = req.headers.authorization;
+            if (!authHeader) {
+                return res.status(401).send({ message: 'unauthorized access' });
+            }
+            const token = authHeader.split(' ')[1];
+            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET
+                , (err, decoded) => {
+                    if (err) {
+                        return res.status(403).send({ message: 'Forbidden access' });
+                    }
+                    console.log('decoded', decoded);
+                    req.decoded = decoded;
+                    next();
+                })
+        }
+
         const partCollection = client.db("computerMenia").collection("part");
         const orderCollection = client.db("computerMenia").collection("order");
         const reviewCollection = client.db("computerMenia").collection("review");
@@ -67,12 +85,18 @@ async function run() {
             res.send(result);
         })
 
-        app.get('/myOrders', async (req, res) => {
+        app.get('/myOrders', varifyJWT, async (req, res) => {
             const email = req.query.email;
-            const query = { email: email };
-            const cursor = orderCollection.find(query);
-            const result = await cursor.toArray();
-            res.send(result);
+            const decodedEmail = req.decoded.email;
+            if (email === decodedEmail) {
+                const query = { email: email };
+                const cursor = orderCollection.find(query);
+                const result = await cursor.toArray();
+                return res.send(result);
+            }
+            else {
+                return res.status(403).send({ messege: 'forbidden access' })
+            }
         })
 
         app.delete('/orders/:_id', async (req, res) => {
