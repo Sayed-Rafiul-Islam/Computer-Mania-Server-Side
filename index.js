@@ -170,7 +170,7 @@ async function run() {
             res.send(users)
         })
 
-        app.put('/makeAdmin', async (req, res) => {
+        app.put('/makeAdmin', varifyJWT, async (req, res) => {
             const email = req.query.email;
             const { role } = req.body;
             const query = { email: email };
