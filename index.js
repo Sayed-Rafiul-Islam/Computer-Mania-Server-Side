@@ -172,16 +172,21 @@ async function run() {
 
         app.put('/makeAdmin', varifyJWT, async (req, res) => {
             const email = req.query.email;
-            const { role } = req.body;
-            const query = { email: email };
-            const options = { upsert: true };
-            const updatedDoc = {
-                $set: {
-                    role: role
-                }
-            };
-            const result = await profileCollection.updateOne(query, updatedDoc, options);
-            res.send(result);
+            const requester = req.decoded.email
+            const requesterAccount = profileCollection.findOne({ email: requester })
+            if (requesterAccount.role === 'admin') {
+                const { role } = req.body;
+                const query = { email: email };
+                const options = { upsert: true };
+                const updatedDoc = {
+                    $set: {
+                        role: role
+                    }
+                };
+                const result = await profileCollection.updateOne(query, updatedDoc, options);
+                res.send(result);
+            }
+
         })
     }
     finally {
