@@ -150,11 +150,12 @@ async function run() {
                 res.send(result);
             }
             else {
-                const { email } = req.body;
+                const { email, displayName } = req.body;
                 const options = { upsert: true };
                 const updatedDoc = {
                     $set: {
-                        email: email
+                        email: email,
+                        displayName: displayName
                     }
                 };
                 const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' })
