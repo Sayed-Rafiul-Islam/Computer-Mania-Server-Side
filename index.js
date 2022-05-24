@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
+const jwt = require('jsonwebtoken')
 
 
 const app = express();
@@ -18,8 +19,6 @@ app.use(express.json());
 
 // =-------------------------- from my DB
 
-// user : computer-menia
-// pass : ddb5yunjxkafYLSZ
 
 const uri = "mongodb+srv://computer-menia:ddb5yunjxkafYLSZ@cluster0.m7qfs.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -134,8 +133,9 @@ async function run() {
                         email: email
                     }
                 };
+                const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' })
                 const result = await profileCollection.updateOne(query, updatedDoc, options);
-                res.send(result);
+                res.send({ result, token });
             }
         })
     }
