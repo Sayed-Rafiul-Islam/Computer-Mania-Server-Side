@@ -99,6 +99,12 @@ async function run() {
             // }
         })
 
+        app.get('/allOrders', async (req, res) => {
+            const query = {};
+            const result = await orderCollection.find(query).toArray();
+            res.send(result);
+        })
+
         app.delete('/orders/:_id', async (req, res) => {
             const id = req.params._id;
             const query = { _id: ObjectId(id) };
