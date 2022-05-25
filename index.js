@@ -227,7 +227,7 @@ async function run() {
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: amount,
                 currency: "usd",
-                automatic_payment_methods: { 'card'},
+                automatic_payment_methods: ['card']
             });
 
             res.send({
