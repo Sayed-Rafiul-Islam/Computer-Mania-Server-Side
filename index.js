@@ -198,6 +198,15 @@ async function run() {
             const isAdmin = user.role === 'admin';
             res.send({ admin: isAdmin })
         })
+
+
+        app.post('/newPart', async (req, res) => {
+            const newPart = req.body;
+            const result = await partCollection.insertOne(newPart);
+            res.send(result);
+        })
+
+
     }
     finally {
 
