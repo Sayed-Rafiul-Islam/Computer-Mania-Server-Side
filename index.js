@@ -55,7 +55,7 @@ async function run() {
             const query = {};
             const cursor = partCollection.find(query);
             const parts = await cursor.toArray();
-            res.send(parts);
+            res.send(parts.reverse());
         })
 
         app.get('/placeOrder/:_id', async (req, res) => {
