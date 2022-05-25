@@ -86,18 +86,18 @@ async function run() {
             res.send(result);
         })
 
-        app.get('/myOrders', varifyJWT, async (req, res) => {
+        app.get('/myOrders', async (req, res) => {
             const email = req.query.email;
-            const decodedEmail = req.decoded.email;
-            if (email === decodedEmail) {
-                const query = { email: email };
-                const cursor = orderCollection.find(query);
-                const result = await cursor.toArray();
-                return res.send(result);
-            }
-            else {
-                return res.status(403).send({ messege: 'forbidden access' })
-            }
+            // const decodedEmail = req.decoded.email;
+            // if (email === decodedEmail) {
+            const query = { email: email };
+            const cursor = orderCollection.find(query);
+            const result = await cursor.toArray();
+            res.send(result);
+            // }
+            // else {
+            //     return res.status(403).send({ messege: 'forbidden access' })
+            // }
         })
 
         app.get('/allOrders', async (req, res) => {
