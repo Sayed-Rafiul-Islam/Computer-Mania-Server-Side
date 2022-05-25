@@ -212,6 +212,13 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/payment/:_id', async (req, res) => {
+            const id = req.params._id;
+            const query = { _id: ObjectId(id) };
+            const result = await orderCollection.findOne(query);
+            res.send(result);
+        })
+
 
     }
     finally {
