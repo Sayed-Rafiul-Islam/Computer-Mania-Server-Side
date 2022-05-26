@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId, Transaction } = require('mongodb');
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -51,6 +51,7 @@ async function run() {
         const orderCollection = client.db("computerMenia").collection("order");
         const reviewCollection = client.db("computerMenia").collection("review");
         const profileCollection = client.db("computerMenia").collection("profile");
+        const paymentCollection = client.db("computerMenia").collection("payment");
 
         app.get('/parts', async (req, res) => {
             const query = {};
@@ -233,6 +234,24 @@ async function run() {
 
             res.send({ clientSecret: paymentIntent.client_secret });
         });
+
+        app.patch('/payment/:_id', async (req, res) => {
+            const id = req.params._id;
+            const payment = req.body;
+            const filter = { _id: ObjectId(id) };
+            const requesterAccount = profileCollection.findOne({ email: requester })
+            const updatedDoc = {
+                $set: {
+                    paid: true,
+                    transactionId: payment.transactionId
+                }
+            };
+            const updateOrder = await orderCollection.updateOne(query, updatedDoc, options);
+            const result = await paymentCollection.insertOne(payment);
+            res.send(updatedDoc);
+
+
+        })
 
 
     }
