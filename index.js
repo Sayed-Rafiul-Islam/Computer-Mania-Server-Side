@@ -41,7 +41,6 @@ async function run() {
                     if (err) {
                         return res.status(403).send({ message: 'Forbidden access' });
                     }
-                    console.log('decoded', decoded);
                     req.decoded = decoded;
                     next();
                 })
@@ -58,6 +57,13 @@ async function run() {
             const cursor = partCollection.find(query);
             const parts = await cursor.toArray();
             res.send(parts.reverse());
+        })
+
+        app.delete('/parts/:_id', async (req, res) => {
+            const id = req.params._id;
+            const query = { _id: ObjectId(id) };
+            const result = await partCollection.deleteOne(query);
+            res.send(result);
         })
 
         app.get('/placeOrder/:_id', async (req, res) => {
@@ -104,6 +110,19 @@ async function run() {
         app.get('/allOrders', async (req, res) => {
             const query = {};
             const result = await orderCollection.find(query).toArray();
+            res.send(result);
+        })
+
+        app.put('/allOrders/:_id', async (req, res) => {
+            const id = req.params._id;
+            const shipStatus = req.body;
+            console.log(shipStatus)
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: shipStatus
+            };
+            const result = await orderCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
         })
 
@@ -225,7 +244,6 @@ async function run() {
             const service = req.body;
             const price = service.price;
             const amount = parseInt(price) * 100;
-            console.log(price)
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: amount,
                 currency: 'usd',
@@ -235,19 +253,18 @@ async function run() {
             res.send({ clientSecret: paymentIntent.client_secret });
         });
 
-        app.patch('/payment/:_id', async (req, res) => {
+        app.put('/payment/:_id', async (req, res) => {
             const id = req.params._id;
             const payment = req.body;
             const filter = { _id: ObjectId(id) };
-            const requesterAccount = profileCollection.findOne({ email: requester })
             const updatedDoc = {
                 $set: {
                     paid: true,
                     transactionId: payment.transactionId
                 }
             };
-            const updateOrder = await orderCollection.updateOne(query, updatedDoc, options);
             const result = await paymentCollection.insertOne(payment);
+            const updateOrder = await orderCollection.updateOne(filter, updatedDoc);
             res.send(updatedDoc);
 
 
