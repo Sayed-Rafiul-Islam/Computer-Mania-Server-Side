@@ -32,7 +32,7 @@ async function run() {
 
         function varifyJWT(req, res, next) {
             const authHeader = req.headers.authorization;
-
+            console.log(authHeader)
             if (!authHeader) {
                 return res.status(401).send({ message: 'unauthorized access' });
             }
@@ -205,7 +205,6 @@ async function run() {
             const query1 = { email: requester };
             const requesterAccount = await profileCollection.findOne(query1);
 
-            console.log(JSON.stringify(query1))
             if (requesterAccount.role === 'admin') {
                 const { role } = req.body;
                 const query = { email: email };
