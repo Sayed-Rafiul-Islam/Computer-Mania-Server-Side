@@ -32,6 +32,7 @@ async function run() {
 
         function varifyJWT(req, res, next) {
             const authHeader = req.headers.authorization;
+
             if (!authHeader) {
                 return res.status(401).send({ message: 'unauthorized access' });
             }
@@ -42,6 +43,7 @@ async function run() {
                         return res.status(403).send({ message: 'Forbidden access' });
                     }
                     req.decoded = decoded;
+
                     next();
                 })
         }
@@ -200,7 +202,10 @@ async function run() {
         app.put('/makeAdmin', varifyJWT, async (req, res) => {
             const email = req.query.email;
             const requester = req.decoded.email
-            const requesterAccount = profileCollection.findOne({ email: requester })
+            const query1 = { email: requester };
+            const requesterAccount = await profileCollection.findOne(query1);
+
+            console.log(JSON.stringify(query1))
             if (requesterAccount.role === 'admin') {
                 const { role } = req.body;
                 const query = { email: email };
