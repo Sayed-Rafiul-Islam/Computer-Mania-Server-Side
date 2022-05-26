@@ -54,6 +54,7 @@ async function run() {
         const profileCollection = client.db("computerMenia").collection("profile");
         const paymentCollection = client.db("computerMenia").collection("payment");
 
+        // ?load computer parts 
         app.get('/parts', async (req, res) => {
             const query = {};
             const cursor = partCollection.find(query);
@@ -61,6 +62,7 @@ async function run() {
             res.send(parts.reverse());
         })
 
+        // delete a product 
         app.delete('/parts/:_id', async (req, res) => {
             const id = req.params._id;
             const query = { _id: ObjectId(id) };
@@ -68,6 +70,7 @@ async function run() {
             res.send(result);
         })
 
+        // get the order that user wants to order
         app.get('/placeOrder/:_id', async (req, res) => {
             const id = req.params._id;
             const query = { _id: ObjectId(id) };
@@ -75,6 +78,7 @@ async function run() {
             res.send(result);
         })
 
+        // update the quantity of that product after being ordered
         app.put('/placeOrder/:_id', async (req, res) => {
             const id = req.params._id;
             const updatedQuantity = req.body;
@@ -89,12 +93,14 @@ async function run() {
             res.send(result);
         })
 
+        //  orders stored
         app.post('/orders', async (req, res) => {
             const order = req.body;
             const result = await orderCollection.insertOne(order);
             res.send(result);
         })
 
+        // loaf specific order for an user
         app.get('/myOrders', varifyJWT, async (req, res) => {
             const email = req.query.email;
             const decodedEmail = req.decoded.email;
@@ -109,12 +115,14 @@ async function run() {
             }
         })
 
+        //  load all orders of all users
         app.get('/allOrders', async (req, res) => {
             const query = {};
             const result = await orderCollection.find(query).toArray();
             res.send(result);
         })
 
+        // update ship status
         app.put('/allOrders/:_id', async (req, res) => {
             const id = req.params._id;
             const shipStatus = req.body;
@@ -128,6 +136,7 @@ async function run() {
             res.send(result);
         })
 
+        // remove an order 
         app.delete('/orders/:_id', async (req, res) => {
             const id = req.params._id;
             const query = { _id: ObjectId(id) };
@@ -135,6 +144,7 @@ async function run() {
             res.send(result);
         })
 
+        // add a review or update it
         app.put('/review', async (req, res) => {
             const mail = req.query.email;
             const { displayName, rating, experience, email } = req.body;
@@ -152,6 +162,7 @@ async function run() {
             res.send(result);
         })
 
+        // load  home page  reviews
         app.get('/reviews', async (req, res) => {
             const query = {};
             const cursor = reviewCollection.find(query);
@@ -159,6 +170,7 @@ async function run() {
             res.send(reviews);
         })
 
+        // update profile
         app.put('/profile', async (req, res) => {
             const mail = req.query.email;
             const query = { email: mail };
@@ -193,12 +205,14 @@ async function run() {
             }
         })
 
+        // store all the profiles
         app.get('/users', async (req, res) => {
             const query = {};
             const users = await profileCollection.find(query).toArray();
             res.send(users)
         })
 
+        //  grant an user admin level access
         app.put('/makeAdmin', varifyJWT, async (req, res) => {
             const email = req.query.email;
             const requester = req.decoded.email
@@ -223,6 +237,7 @@ async function run() {
 
         })
 
+        // request check if the requester has admin level access or not
         app.get('/admin/:email', async (req, res) => {
             const email = req.params.email;
             const user = await profileCollection.findOne({ email: email });
@@ -231,12 +246,14 @@ async function run() {
         })
 
 
+        //  add a new product
         app.post('/newPart', async (req, res) => {
             const newPart = req.body;
             const result = await partCollection.insertOne(newPart);
             res.send(result);
         })
 
+        //  payment for specific order load
         app.get('/payment/:_id', async (req, res) => {
             const id = req.params._id;
             const query = { _id: ObjectId(id) };
@@ -244,6 +261,7 @@ async function run() {
             res.send(result);
         })
 
+        // update payment status and get payment sectret
         app.post('/create-payment-intent', async (req, res) => {
             const service = req.body;
             const price = service.price;
@@ -257,7 +275,7 @@ async function run() {
             res.send({ clientSecret: paymentIntent.client_secret });
         });
 
-
+        // store payment history 
         app.put('/payment/:_id', async (req, res) => {
             const id = req.params._id;
             const payment = req.body;
